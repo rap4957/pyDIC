@@ -47,7 +47,7 @@ def scan_image(img1, img2, window_size, magnitude=True):
         cc_matrix = np.zeros((int(height1/window_size), int(width1/window_size)))
     else:
         cc_matrix = np.zeros((int(height1/window_size), int(width1/window_size), 2))
-    
+
     for row in np.arange(0, np.shape(cc_matrix)[0],1):
         for column in np.arange(0, np.shape(cc_matrix)[1],1):
             max_coords = find_max_2d(cross_correlate(img1[row*window_size:window_size*(row+1),column*window_size:window_size*(column+1)], 
@@ -56,7 +56,7 @@ def scan_image(img1, img2, window_size, magnitude=True):
                 cc_matrix[row, column] = np.hypot(max_coords[0], max_coords[1])
             else:
                 cc_matrix[row, column] = (max_coords[0], max_coords[1])
-    
+              
     return cc_matrix
 
 def rgb2gray(rgb):

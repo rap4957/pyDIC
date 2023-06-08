@@ -15,7 +15,9 @@ class DICAnalysis():
         n = self.n
         window_size = self.window_size
         imgs = self.images
-
+        cc_stack = np.zeros((n, int(height), int(width)))
+        zncc_stack = np.zeros((n, int(height), int(width)))
+        
         for p in range(1,n):
             print(f'loop {p} of {n}')
             cc_matrices = np.zeros((int(height), int(width)))
@@ -26,7 +28,9 @@ class DICAnalysis():
                 for x in range(0,width, window_size):
                     cc_matrices[y:y+window_size,x:x+window_size] = np.ones((window_size, window_size)) * magnitudes[int(y/window_size),int(x/window_size)]
                     znccs[y:y+window_size,x:x+window_size] = np.ones((window_size, window_size))
-        return cc_matrices
+            cc_stack[p] = cc_matrices
+            zncc_stack[p] = znccs
+        return cc_stack
         # plt.imshow(imgs[p], cmap='Greys', origin='lower')
         # plt.imshow(cc_matrices, cmap='jet', alpha=0.25, origin='lower')
         # plt.colorbar()
