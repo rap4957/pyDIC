@@ -23,6 +23,7 @@ def scan_image(img1, img2, window_size):
                          
     for row in np.arange(0, np.shape(magnitude_matrix)[0],1):
         for column in np.arange(0, np.shape(magnitude_matrix)[1],1):
+            #print(f'cross correlating img1[{row*window_size}:{window_size*(row+1)},{column*window_size}:{window_size*(column+1)}] with img2[{row*window_size}:{window_size*(row+1)},{column*window_size}:{window_size*(column+1)}]')
             max_coords = find_max_2d(cross_correlate(img1[row*window_size:window_size*(row+1),column*window_size:window_size*(column+1)], 
                                                                     img2[row*window_size:window_size*(row+1),column*window_size:window_size*(column+1)]))
             magnitude_matrix[row, column] = np.hypot(max_coords[0], max_coords[1])
@@ -58,7 +59,12 @@ def find_max_2d(matrix):
     #         if(matrix[y,x]>matrix[max_coords[1], max_coords[0]]):
     #             max_coords = [x, y]
     # return max_coords
-    [y,x] = [np.where(matrix==np.max(matrix))[i][0] for i in [0,1]]
-
-    return [x-len(matrix[0]),y-len(matrix[0,:])]
+    dcc_dx = np.zeros(matrix.shape)
+    dcc_dy = np.zeros(matrix.shape)
+    dcc_dx[:,1:] = matrix[:,1:] - matrix[:,:-1]
+    dcc_dy[1:,:] = matrix[1:,:] - matrix[:-1,:]
+    derivative_matrix = np.sqrt(dcc_dx**2 + dcc_dy**2)
+    [y,x] = [np.where(derivative_matrix==np.max(derivative_matrix))[i][0] for i in [0,1]] #return coordinates for maximum magnitude of change, this should be roughly centered on the inflection point 
+    #print(f' Matrix shape : {matrix.shape} UV coords:({x-len(matrix[0])/2}, {y-len(matrix[0,:])/2}) angle: {np.arctan((y-len(matrix[0,:])/2)/(x-len(matrix[0])/2)) * 180/np.pi}')
+    return [x-len(matrix[0])/2,y-len(matrix[0,:])/2]
         
